@@ -1,8 +1,8 @@
 /*
  * Part1.c
  *
- *  Created on: Feb 11, 2023
- *      Author: Russell Trafford
+ *  Created on: Feb 19, 2023
+ *      Author: Beth Kraus
  *
  *  This code is a template which will change the color of the LED being blinked using the interrupt routine.
  */
@@ -35,14 +35,15 @@ int main(void)
 
     while(1)
     {
-        if (LED_Color)
-            P1OUT ^= BIT0;                  // P1.0 = toggle
-            P6OUT &= BIT6;
-        if  (!(LED_Color))
-            P6OUT ^= BIT6;                  // P6.6 = toggle
-            P1OUT &= BIT0;
+        if (LED_Color) {                     //If the button is not pushed then, the Red LED will blink
+            P1OUT &= ~BIT0;                  // P1.0 = toggle
+            P6OUT ^= BIT6;                 //Turns the Green LED off
+            __delay_cycles(100000);}
+            else  {                          //If the button is pushed then, the Green LED will blink
+            P6OUT &= ~BIT6;                  // P6.6 = toggle
+            P1OUT ^= BIT0;                  // Turns the Red LED off
         __delay_cycles(100000);
-
+        }
     }
 }
 
@@ -83,16 +84,15 @@ __interrupt void Port_2(void)
 {
     P2IFG &= ~BIT3;                         // Clear P1.3 IFG
 
-    if (P2IN & BIT3)       // @TODO Fill in this argument within the If statement to check if the interrupt was triggered off a rising edge.
+    if (P2IN & BIT3)              //If the button is not pressed
     {
         LED_Color = 0;
-        P2IES |= BIT3;
+        P2IES |= BIT3;             // ORs the bit
     }
 
-    else if (!(P2IN & BIT3)) // @TODO Fill in this argument within the If statement to check if the interrupt was triggered off a falling edge.
+    if (!(P2IN & BIT3))           //If the button is pressed
     {
         LED_Color = 1;
-        P2IES &= BIT3; // @TODO Add code to change which edge the interrupt should be looking for next
+        P2IES &= ~BIT3;         // Clears the bit
     }
 }
-
