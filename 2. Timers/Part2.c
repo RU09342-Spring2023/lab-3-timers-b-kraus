@@ -29,10 +29,14 @@ void main(){
 
 
 void gpioInit(){
-    // @TODO Initialize the Red or Green LED
 
-    // @TODO Initialize Button 2.3
+    P6OUT &= ~BIT6;
+    P6DIR |= BIT6;
 
+    P2OUT |= BIT3;
+    P2REN |= BIT3;
+    P2IES &= ~BIT3;
+    P2IE |= BIT3;
 
 }
 
