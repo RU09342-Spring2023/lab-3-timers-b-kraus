@@ -1,21 +1,20 @@
 /*
  * Part2.c
  *
- *  Created on: Feb 11, 2023
- *      Author: Russell Trafford
+ *  Created on: Feb 23, 2023
+ *      Author: Beth Kraus
  *
  *      This code will need to change the speed of an LED between 3 different speeds by pressing a button.
  */
 
 #include <msp430.h>
-
+int i=0;
 void gpioInit();
 void timerInit();
 
 void main(){
 
     WDTCTL = WDTPW | WDTHOLD;               // Stop watchdog timer
-
     gpioInit();
     timerInit();
 
@@ -37,12 +36,13 @@ void gpioInit(){
     P2REN |= BIT3;
     P2IES &= ~BIT3;
     P2IE |= BIT3;
-
+    P2IFG &= ~BIT3;
 }
 
 void timerInit(){
-    // @TODO Initialize Timer B1 in Continuous Mode using ACLK as the source CLK with Interrupts turned on
-
+    TB1CCTL0 = CCIE;
+    TB1CTL = TBSSEL_1 | MC_2;
+    TB1CCR0 = 50000;
 }
 
 
@@ -54,9 +54,10 @@ void timerInit(){
 #pragma vector=PORT2_VECTOR
 __interrupt void Port_2(void)
 {
-    // @TODO Remember that when you service the GPIO Interrupt, you need to set the interrupt flag to 0.
 
-    // @TODO When the button is pressed, you can change what the CCR0 Register is for the Timer. You will need to track what speed you should be flashing at.
+    i++;
+     P2IFG &= ~BIT3;
+     P6IN ^= BIT6;
 
 }
 
@@ -65,7 +66,18 @@ __interrupt void Port_2(void)
 #pragma vector = TIMER1_B0_VECTOR
 __interrupt void Timer1_B0_ISR(void)
 {
-    // @TODO You can toggle the LED Pin in this routine and if adjust your count in CCR0.
-}
+    if (i == 1) {
+        TB1CCR0 += 5000;
+        P6IN ^= BIT6;}
+    else if (i == 2) {
+        TB1CCR0 += 10000;
+        P6IN ^= BIT6;}
+    else if (i == 3) {
+         TB1CCR0 += 15000;
+         P6IN ^= BIT6;}
+    else {
+        i = 0;}
+    }
+
 
 
