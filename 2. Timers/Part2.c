@@ -57,7 +57,7 @@ __interrupt void Port_2(void)
 
     i++;
      P2IFG &= ~BIT3;
-     P6IN ^= BIT6;
+     P6OUT ^= BIT6;
 
 }
 
@@ -68,13 +68,13 @@ __interrupt void Timer1_B0_ISR(void)
 {
     if (i == 1) {
         TB1CCR0 += 5000;
-        P6IN ^= BIT6;}
+        P6OUT ^= BIT6;}
     else if (i == 2) {
         TB1CCR0 += 10000;
-        P6IN ^= BIT6;}
+        P6OUT ^= BIT6;}
     else if (i == 3) {
          TB1CCR0 += 15000;
-         P6IN ^= BIT6;}
+         P6OUT ^= BIT6;}
     else {
         i = 0;}
     }
